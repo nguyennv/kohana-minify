@@ -143,7 +143,7 @@ class Minify_HTML {
 			,array_values($this->_placeholders)
 			,$this->_html
 		);
-		return $this->_html;
+		return $this->_remove_whitespace($this->_html);
 	}
 	
 	protected function _comment_cb($m)
@@ -166,9 +166,19 @@ class Minify_HTML {
 	protected $_css_minifier = null;
 	protected $_js_minifier = null;
 
+	
 	protected function _outside_tag_cb($m)
 	{
 		return '>' . preg_replace('/^\\s+|\\s+$/', ' ', $m[1]) . '<';
+	}
+
+	protected function _remove_whitespace($content)
+	{
+		return preg_replace(
+					array('/\s+/', '/\s*\n\s*/', '/\s*\>\s*\<\s*/',),
+					array(' ', "\n", '><',),
+					$content
+				);
 	}
 	
 	protected function _remove_pre_cb($m)
