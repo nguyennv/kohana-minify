@@ -53,8 +53,15 @@ class Kohana_Minify_Packer_Parse {
 			}
 		}
 		// pass the modified arguments
-		if (!empty($expression)) $this->_add($expression, $replacement, $length);
-		else $this->_add('/^$/', $replacement, $length);
+		if (!empty($expression))
+		{
+			$this->_add($expression, $replacement, $length);
+		}
+		else
+		{
+			$this->_add('/^$/', $replacement, $length);
+		}
+		return $this;
 	}
 	
 	public function exec($string)
@@ -89,6 +96,7 @@ class Kohana_Minify_Packer_Parse {
 	{
 		// clear the patterns collection so that this object may be re-used
 		$this->_patterns = array();
+		return $this;
 	}
 
 	// private
@@ -100,6 +108,7 @@ class Kohana_Minify_Packer_Parse {
 	{
 		$arguments = func_get_args();
 		$this->_patterns[] = $arguments;
+		return $this;
 	}
 	
 	// this is the global replace function (it's quite complicated)

@@ -70,10 +70,10 @@ class Kohana_Minify_Packer {
 	const IGNORE = '$1';
 
 	// validate parameters
-	private $_script = '';
-	private $_encoding = 62;
-	private $_fast_decode = TRUE;
-	private $_special_chars = FALSE;
+	private $_script		= '';
+	private $_encoding		= 62;
+	private $_fast_decode	= TRUE;
+	private $_special_chars	= FALSE;
 
 	private $_literal_encoding = array(
 		'None' => 0,
@@ -84,22 +84,27 @@ class Kohana_Minify_Packer {
 
 	public function __construct($script, $encoding = 62, $fast_decode = TRUE, $special_chars = FALSE)
 	{
-		$this->_script = $script . "\n";
+		$this->_script 			= $script . "\n";
 		if (array_key_exists($encoding, $this->_literal_encoding))
-			$encoding = $this->_literal_encoding[$encoding];
-		$this->_encoding = min((int)$encoding, 95);
-		$this->_fast_decode = (bool) $fast_decode;	
-		$this->_special_chars = (bool) $special_chars;
+		{
+			$encoding 			= $this->_literal_encoding[$encoding];
+		}
+		$this->_encoding		= min((int)$encoding, 95);
+		$this->_fast_decode		= (bool) $fast_decode;	
+		$this->_special_chars	= (bool) $special_chars;
 	}
 
 	public function pack()
 	{
 		$this->_add_parser('_basic_compression');
 		if ($this->_special_chars)
+		{
 			$this->_add_parser('_encode_special_chars');
+		}
 		if ($this->_encoding)
+		{
 			$this->_add_parser('_encode_keywords');
-
+		}
 		// go!
 		return $this->_pack($this->_script);
 	}
@@ -129,26 +134,36 @@ class Kohana_Minify_Packer {
 		// make safe
 		$parser->escape_char = '\\';
 		// protect strings
-		$parser->add('/\'[^\'\\n\\r]*\'/', self::IGNORE);
-		$parser->add('/"[^"\\n\\r]*"/', self::IGNORE);
+		$parser
+			->add('/\'[^\'\\n\\r]*\'/', self::IGNORE)
+			->add('/"[^"\\n\\r]*"/', self::IGNORE);
 		// remove comments
-		$parser->add('/\\/\\/[^\\n\\r]*[\\n\\r]/', ' ');
-		$parser->add('/\\/\\*[^*]*\\*+([^\\/][^*]*\\*+)*\\//', ' ');
+		$parser
+			->add('/\\/\\/[^\\n\\r]*[\\n\\r]/', ' ')
+			->add('/\\/\\*[^*]*\\*+([^\\/][^*]*\\*+)*\\//', ' ');
 		// protect regular expressions
-		$parser->add('/\\s+(\\/[^\\/\\n\\r\\*][^\\/\\n\\r]*\\/g?i?)/', '$2'); // IGNORE
-		$parser->add('/[^\\w\\x24\\/\'"*)\\?:]\\/[^\\/\\n\\r\\*][^\\/\\n\\r]*\\/g?i?/', self::IGNORE);
+		// IGNORE
+		$parser
+			->add('/\\s+(\\/[^\\/\\n\\r\\*][^\\/\\n\\r]*\\/g?i?)/', '$2')
+			->add('/[^\\w\\x24\\/\'"*)\\?:]\\/[^\\/\\n\\r\\*][^\\/\\n\\r]*\\/g?i?/', self::IGNORE);
 		// remove: ;;; do_something();
-		if ($this->_special_chars) $parser->add('/;;;[^\\n\\r]+[\\n\\r]/');
+		if ($this->_special_chars)
+		{
+			$parser->add('/;;;[^\\n\\r]+[\\n\\r]/');
+		}
 		// remove redundant semi-colons
-		$parser->add('/\\(;;\\)/', self::IGNORE); // protect for (;;) loops
-		$parser->add('/;+\\s*([};])/', '$2');
+		// protect for (;;) loops
+		$parser
+			->add('/\\(;;\\)/', self::IGNORE)
+			->add('/;+\\s*([};])/', '$2');
 		// apply the above
 		$script = $parser->exec($script);
 
 		// remove white-space
-		$parser->add('/(\\b|\\x24)\\s+(\\b|\\x24)/', '$2 $3');
-		$parser->add('/([+\\-])\\s+([+\\-])/', '$2 $3');
-		$parser->add('/\\s+/', '');
+		$parser
+			->add('/(\\b|\\x24)\\s+(\\b|\\x24)/', '$2 $3')
+			->add('/([+\\-])\\s+([+\\-])/', '$2 $3')
+			->add('/\\s+/', '');
 		// done
 		return $parser->exec($script);
 	}
@@ -284,7 +299,8 @@ class Kohana_Minify_Packer {
 		return array(
 			'sorted'  => $_sorted,
 			'encoded' => $_encoded,
-			'protected' => $_protected);
+			'protected' => $_protected
+		);
 	}
 
 	private $_count = array();
@@ -332,7 +348,7 @@ class Kohana_Minify_Packer {
 			if ($this->_encoding > 62)
 				$decode = preg_replace('/\\\\w/', '[\\xa1-\\xff]', $decode);
 			// perform the encoding inline for lower ascii values
-			elseif ($ascii < 36)
+			else if ($ascii < 36)
 				$decode = preg_replace($_ENCODE, $inline, $decode);
 			// special case: when $count==0 there are no keywords. I want to keep
 			//  the basic shape of the unpacking funcion so i'll frig the code...
