@@ -1,22 +1,22 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Kohana_Minify_Packer_Parse {
-	public $ignore_case = FALSE;
-	public $escape_char = '';
+	public $ignore_case   = FALSE;
+	public $escape_char   = '';
 	
 	// constants
-	const EXPRESSION = 0;
-	const REPLACEMENT = 1;
-	const LENGTH = 2;
+	const EXPRESSION      = 0;
+	const REPLACEMENT     = 1;
+	const LENGTH          = 2;
 	
 	// used to determine nesting levels
-	private $_groups = '/\\(/';//g
+	private $_groups      = '/\\(/';//g
 	private $_sub_replace = '/\\$\\d/';
-	private $_indexed = '/^\\$\\d+$/';
-	private $_trim = '/([\'"])\\1\\.(.*)\\.\\1\\1$/';
-	private $_escape = '/\\\./';//g
-	private $_quote = '/\'/';
-	private $_deleted = '/\\x01[^\\x01]*\\x01/';//g
+	private $_indexed     = '/^\\$\\d+$/';
+	private $_trim        = '/([\'"])\\1\\.(.*)\\.\\1\\1$/';
+	private $_escape      = '/\\\./';//g
+	private $_quote       = '/\'/';
+	private $_deleted     = '/\\x01[^\\x01]*\\x01/';//g
 	
 	public function add($expression, $replacement = '')
 	{

@@ -94,30 +94,35 @@ class Kohana_Minify_HTML {
 		$this->_html = preg_replace_callback(
 			'/(\\s*)<script(\\b[^>]*?>)([\\s\\S]*?)<\\/script>(\\s*)/i'
 			,array($this, '_remove_script_cb')
-			,$this->_html);
+			,$this->_html
+		);
 
 		// replace STYLEs (and minify) with placeholders
 		$this->_html = preg_replace_callback(
 			'/\\s*<style(\\b[^>]*>)([\\s\\S]*?)<\\/style>\\s*/i'
 			,array($this, '_remove_style_cb')
-			,$this->_html);
+			,$this->_html
+		);
 
 		// remove HTML comments (not containing IE conditional comments).
 		$this->_html = preg_replace_callback(
 			'/<!--([\\s\\S]*?)-->/'
 			,array($this, '_comment_cb')
-			,$this->_html);
+			,$this->_html
+		);
 
 		// replace PREs with placeholders
 		$this->_html = preg_replace_callback('/\\s*<pre(\\b[^>]*?>[\\s\\S]*?<\\/pre>)\\s*/i'
 			,array($this, '_remove_pre_cb')
-			,$this->_html);
+			,$this->_html
+		);
 
 		// replace TEXTAREAs with placeholders
 		$this->_html = preg_replace_callback(
 			'/\\s*<textarea(\\b[^>]*?>[\\s\\S]*?<\\/textarea>)\\s*/i'
 			,array($this, '_remove_textarea_cb')
-			,$this->_html);
+			,$this->_html
+		);
 
 		// trim each line.
 		// @todo take into account attribute values that span multiple lines.
@@ -128,13 +133,15 @@ class Kohana_Minify_HTML {
 			.'|caption|center|cite|col(?:group)?|dd|dir|div|dl|dt|fieldset|form'
 			.'|frame(?:set)?|h[1-6]|head|hr|html|legend|li|link|map|menu|meta'
 			.'|ol|opt(?:group|ion)|p|param|t(?:able|body|head|d|hORr|foot|itle)'
-			.'|ul)\\b[^>]*>)/i', '$1', $this->_html);
+			.'|ul)\\b[^>]*>)/i', '$1', $this->_html
+		);
 
 		// remove ws outside of all elements
 		$this->_html = preg_replace(
 			'/>(\\s(?:\\s*))?([^<]+)(\\s(?:\s*))?</'
 			,'>$1$2$3<'
-			,$this->_html);
+			,$this->_html
+		);
 		
 		// use newlines before 1st attribute in open tags (to limit line lengths)
 		$this->_html = preg_replace('/(<[a-z\\-]+)\\s+([^>]+>)/i', "$1\n$2", $this->_html);
@@ -161,9 +168,7 @@ class Kohana_Minify_HTML {
 
 	protected function _comment_cb($m)
 	{
-		return (0 === strpos($m[1], '[') OR FALSE !== strpos($m[1], '<!['))
-			? $m[0]
-			: '';
+		return (0 === strpos($m[1], '[') OR FALSE !== strpos($m[1], '<![')) ? $m[0] : '';
 	}
 
 	protected function _reserve_place($content)
@@ -173,11 +178,11 @@ class Kohana_Minify_HTML {
 		return $placeholder;
 	}
 
-	protected $_is_xhtml = NULL;
+	protected $_is_xhtml         = NULL;
 	protected $_replacement_hash = NULL;
-	protected $_placeholders = array();
-	protected $_css_minifier = NULL;
-	protected $_js_minifier = NULL;
+	protected $_placeholders     = array();
+	protected $_css_minifier     = NULL;
+	protected $_js_minifier      = NULL;
 
 	protected function _remove_pre_cb($m)
 	{

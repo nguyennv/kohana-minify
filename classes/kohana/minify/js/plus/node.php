@@ -9,22 +9,22 @@ class Kohana_Minify_JS_Plus_Node
 	private $end;
 	
 	public $tree_nodes = array();
-	public $fun_decls = array();
-	public $var_decls = array();
+	public $fun_decls  = array();
+	public $var_decls  = array();
 
 	public function __construct($t, $type=0)
 	{
 		if ($token = $t->current_token())
 		{
-			$this->type = $type ? $type : $token->type;
-			$this->value = $token->value;
+			$this->type   = $type ? $type : $token->type;
+			$this->value  = $token->value;
 			$this->lineno = $token->lineno;
-			$this->start = $token->start;
-			$this->end = $token->end;
+			$this->start  = $token->start;
+			$this->end    = $token->end;
 		}
 		else
 		{
-			$this->type = $type;
+			$this->type   = $type;
 			$this->lineno = $t->lineno;
 		}
 

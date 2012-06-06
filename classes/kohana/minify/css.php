@@ -16,7 +16,7 @@ class Kohana_Minify_CSS {
 
 	public function __construct($css, array $options = array())
 	{
-		$this->_css = $css;
+		$this->_css     = $css;
 		$this->_options = $options;
 	}
 

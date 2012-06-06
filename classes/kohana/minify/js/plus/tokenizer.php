@@ -2,14 +2,14 @@
 
 class Kohana_Minify_JS_Plus_Tokenizer
 {
-	private $cursor = 0;
+	private $cursor       = 0;
 	private $source;
 
-	public $tokens = array();
-	public $token_index = 0;
-	public $look_ahead = 0;
+	public $tokens        = array();
+	public $token_index   = 0;
+	public $look_ahead    = 0;
 	public $scan_newlines = FALSE;
-	public $scan_operand = TRUE;
+	public $scan_operand  = TRUE;
 
 	public $filename;
 	public $lineno;
@@ -47,16 +47,16 @@ class Kohana_Minify_JS_Plus_Tokenizer
 
 	public function init($source, $filename = '', $lineno = 1)
 	{
-		$this->source = $source;
-		$this->filename = $filename ? $filename : '[inline]';
-		$this->lineno = $lineno;
+		$this->source        = $source;
+		$this->filename      = $filename ? $filename : '[inline]';
+		$this->lineno        = $lineno;
 
-		$this->cursor = 0;
-		$this->tokens = array();
-		$this->token_index = 0;
-		$this->look_ahead = 0;
+		$this->cursor        = 0;
+		$this->tokens        = array();
+		$this->token_index   = 0;
+		$this->look_ahead    = 0;
 		$this->scan_newlines = FALSE;
-		$this->scan_operand = TRUE;
+		$this->scan_operand  = TRUE;
 	}
 
 	public function get_input($chunksize)

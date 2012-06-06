@@ -70,10 +70,10 @@ class Kohana_Minify_Packer {
 	const IGNORE = '$1';
 
 	// validate parameters
-	private $_script		= '';
-	private $_encoding		= 62;
-	private $_fast_decode	= TRUE;
-	private $_special_chars	= FALSE;
+	private $_script        = '';
+	private $_encoding      = 62;
+	private $_fast_decode   = TRUE;
+	private $_special_chars = FALSE;
 
 	private $_literal_encoding = array(
 		'None' => 0,
@@ -84,14 +84,14 @@ class Kohana_Minify_Packer {
 
 	public function __construct($script, $encoding = 62, $fast_decode = TRUE, $special_chars = FALSE)
 	{
-		$this->_script 			= $script . "\n";
+		$this->_script        = $script . "\n";
 		if (array_key_exists($encoding, $this->_literal_encoding))
 		{
-			$encoding 			= $this->_literal_encoding[$encoding];
+			$encoding         = $this->_literal_encoding[$encoding];
 		}
-		$this->_encoding		= min((int)$encoding, 95);
-		$this->_fast_decode		= (bool) $fast_decode;	
-		$this->_special_chars	= (bool) $special_chars;
+		$this->_encoding      = min((int)$encoding, 95);
+		$this->_fast_decode   = (bool) $fast_decode;	
+		$this->_special_chars = (bool) $special_chars;
 	}
 
 	public function pack()
