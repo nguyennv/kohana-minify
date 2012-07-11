@@ -3,7 +3,6 @@
 return array(
 	'cache' => Kohana::$environment === Kohana::PRODUCTION,
 	'cache_lifetime' => 43200,
-	'expires' => 31536000,
 
 	'js' => array(
 		'default' => array(

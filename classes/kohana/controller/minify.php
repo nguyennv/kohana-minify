@@ -117,6 +117,5 @@ class Kohana_Controller_Minify extends Kohana_Controller{
 			Kohana::cache('minify_cache_etag_' . $ctype . $group, $etag);
 		}
 		$this->response->headers('Content-Type', $ctype)->check_cache($etag, $this->request);
-					   //->headers('Expires', gmdate("D, d M Y H:i:s", time() + (int) Kohana::$config->load('minify.expires')) . ' GMT');
 	}
 } // End Kohana_Controller_Minify
