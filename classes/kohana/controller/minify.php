@@ -1,14 +1,16 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Kohana_Controller_Minify extends Kohana_Controller{
+	private $_config;
+
 	public function action_js()
 	{
 		$group = (string) $this->request->param('group');
 		if(empty($group)) $group = 'default';
 		if(!$content = Kohana::cache('minify::js::' . $group))
 		{
-			$path = (string) Kohana::$config->load('minify.js.' . $group . '.path');
-			$files = Kohana::$config->load('minify.js.' . $group . '.files');
+			$path = isset($this->_config['js'][$group]['path']) ? $this->_config['js'][$group]['path'] : '';
+			$files = isset($this->_config['js'][$group]['files']) ? $this->_config['js'][$group]['files'] : array();
 			if(!is_array($files)) $files = array();
 
 			$content = '';
@@ -18,21 +20,21 @@ class Kohana_Controller_Minify extends Kohana_Controller{
 			}
 			if(!empty($content))
 			{
-				if((bool) Kohana::$config->load('minify.js.' . $group . '.packer'))
+				$pack = isset($this->_config['js'][$group]['packer']) ? (bool) $this->_config['js'][$group]['packer'] : false;
+				$is_min = isset($this->_config['js'][$group]['is_min']) ? (bool) $this->_config['js'][$group]['is_min'] : false;
+				if($pack)
 				{
 					$packer = new Minify_Packer($content, 'Normal', TRUE, FALSE);
 					$content = $packer->pack();
 				}
-				else if(!(bool) Kohana::$config->load('minify.js.' . $group . '.is_min'))
+				else if(!$is_min)
 				{
-					$minifier = (string) Kohana::$config->load('minify.js.' . $group . '.minifier');
-					if(class_exists($minifier))
+					$minifier = isset($this->_config['js'][$group]['minifier']) ? $this->_config['js'][$group]['minifier'] : '';
+					if(!empty($minifier) && class_exists($minifier))
 					{
 						$class = new ReflectionClass($minifier);
 						$js_min = $class->newInstance($content);
 						$content = $class->getMethod('min')->invoke($js_min);
-						//$js_min = new $minifier($content);
-						//$content = $js_min->min();
 					}
 					else
 					{
@@ -41,10 +43,9 @@ class Kohana_Controller_Minify extends Kohana_Controller{
 				}
 			}
 
-			if((bool) Kohana::$config->load('minify.cache'))
+			if((bool) $this->_config['cache'])
 			{
-				$cache_lifetime = (int) Kohana::$config->load('minify.cache_lifetime');
-				Kohana::cache('minify::js::' . $group, $content, $cache_lifetime);
+				Kohana::cache('minify::js::' . $group, $content, (int) $this->_config['cache_lifetime']);
 			}
 		}
 		$this->response->body($content);
@@ -56,8 +57,8 @@ class Kohana_Controller_Minify extends Kohana_Controller{
 		if(empty($group)) $group = 'default';
 		if(!$content = Kohana::cache('minify::css::' . $group))
 		{
-			$path = (string) Kohana::$config->load('minify.css.' . $group . '.path');
-			$files = Kohana::$config->load('minify.css.' . $group . '.files');
+			$path = isset($this->_config['css'][$group]['path']) ? $this->_config['css'][$group]['path'] : '';
+			$files = isset($this->_config['css'][$group]['files']) ? $this->_config['css'][$group]['files'] : array();
 			if(!is_array($files)) $files = array();
 
 			$content = '';
@@ -68,14 +69,12 @@ class Kohana_Controller_Minify extends Kohana_Controller{
 
 			if(!empty($content))
 			{
-				$minifier = (string) Kohana::$config->load('minify.css.' . $group . '.minifier');
+				$minifier = isset($this->_config['css'][$group]['minifier']) ? $this->_config['css'][$group]['minifier'] : '';
 				if(class_exists($minifier))
 				{
 					$class = new ReflectionClass($minifier);
 					$css_min = $class->newInstance($content, array('current_dir' => $path));
 					$content = $class->getMethod('min')->invoke($css_min);
-					//$css_min = new $minifier($content, array('current_dir' => $path));
-					//$content = $css_min->min();
 				}
 				else
 				{
@@ -83,15 +82,19 @@ class Kohana_Controller_Minify extends Kohana_Controller{
 				}
 			}
 
-			if((bool) Kohana::$config->load('minify.cache'))
+			if((bool) $this->_config['cache'])
 			{
-				$cache_lifetime = (int) Kohana::$config->load('minify.cache_lifetime');
-				Kohana::cache('minify::css::' . $group, $content, $cache_lifetime);
+				Kohana::cache('minify::css::' . $group, $content, (int) $this->_config['cache_lifetime']);
 			}
 		}
 		$this->response->body($content);
 	}
 
+	public function before()
+	{
+		$this->_config = Kohana::$config->load('minify');
+	}
+	
 	public function after()
 	{
 		switch(strtolower($this->request->action()))
